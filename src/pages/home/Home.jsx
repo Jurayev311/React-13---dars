@@ -7,20 +7,15 @@ const Home = () => {
   const users = useSelector((state) => state.users.users);
   const dispatch = useDispatch();
   const [editId, setEditId] = useState(null);
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    age: "",
-    description: "",
-  });
+  const [newName, setNewName] = useState("");
 
   const handleEdit = (user) => {
     setEditId(user.id);
-    setFormData(user);
+    setNewName(user.name);
   };
 
   const handleSave = (id) => {
-    dispatch(updateUser({ id, ...formData }));
+    dispatch(updateUser({ id, name: newName }));
     setEditId(null);
   };
 
@@ -28,66 +23,24 @@ const Home = () => {
     <div className="max-w-2xl mx-auto my-10">
       <h1 className="text-3xl font-bold text-center mb-6">Users List</h1>
       <div className="flex justify-end mb-4">
-        <Link
-          to="/create"
-          className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700"
-        >
-          Create
+        <Link to="/create" className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700">
+          Create New User
         </Link>
       </div>
       <ul className="space-y-4">
         {users?.map((user) => (
-          <li
-            key={user.id}
-            className="flex flex-col bg-gray-100 p-4 rounded shadow"
-          >
+          <li key={user.id} className="flex justify-between items-center bg-gray-100 p-4 rounded shadow">
             {editId === user.id ? (
-              <>
-                <input
-                  type="text"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={(e) =>
-                    setFormData({ ...formData, firstName: e.target.value })
-                  }
-                  className="border p-2 rounded w-full"
-                />
-                <input
-                  type="text"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={(e) =>
-                    setFormData({ ...formData, lastName: e.target.value })
-                  }
-                  className="border p-2 rounded w-full mt-2"
-                />
-                <input
-                  type="number"
-                  name="age"
-                  value={formData.age}
-                  onChange={(e) =>
-                    setFormData({ ...formData, age: e.target.value })
-                  }
-                  className="border p-2 rounded w-full mt-2"
-                />
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={(e) =>
-                    setFormData({ ...formData, description: e.target.value })
-                  }
-                  className="border p-2 rounded w-full mt-2"
-                />
-              </>
+              <input
+                type="text"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                className="border p-2 rounded w-2/3"
+              />
             ) : (
-              <>
-                <p className="text-lg font-medium">
-                  {user.firstName} {user.lastName} ({user.age} yosh)
-                </p>
-                <p className="text-gray-600">{user.description}</p>
-              </>
+              <span className="text-lg font-medium">{user.name}</span>
             )}
-            <div className="space-x-2 mt-2">
+            <div className="space-x-2">
               {editId === user.id ? (
                 <button
                   onClick={() => handleSave(user.id)}
@@ -96,19 +49,21 @@ const Home = () => {
                   Save
                 </button>
               ) : (
-                <button
-                  onClick={() => handleEdit(user)}
-                  className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-700"
-                >
-                  Update
-                </button>
+                <>
+                  <button
+                    onClick={() => handleEdit(user)}
+                    className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-700"
+                  >
+                    Update
+                  </button>
+                  <button
+                    onClick={() => dispatch(removeUser(user.id))}
+                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-700"
+                  >
+                    Delete
+                  </button>
+                </>
               )}
-              <button
-                onClick={() => dispatch(removeUser(user.id))}
-                className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-700"
-              >
-                Delete
-              </button>
             </div>
           </li>
         ))}
