@@ -20,13 +20,6 @@ const CreateUser = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (
-      !formData.firstName.trim() ||
-      !formData.lastName.trim() ||
-      !formData.age.trim() ||
-      !formData.description.trim()
-    )
-      return;
 
     dispatch(addUser({ id: Date.now(), ...formData }));
     setFormData({ firstName: "", lastName: "", age: "", description: "" });

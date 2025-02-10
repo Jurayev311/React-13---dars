@@ -7,15 +7,20 @@ const Home = () => {
   const users = useSelector((state) => state.users.users);
   const dispatch = useDispatch();
   const [editId, setEditId] = useState(null);
-  const [newName, setNewName] = useState("");
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    age: "",
+    description: "",
+  });
 
   const handleEdit = (user) => {
     setEditId(user.id);
-    setNewName(user.name);
+    setFormData(user);
   };
 
   const handleSave = (id) => {
-    dispatch(updateUser({ id, name: newName }));
+    dispatch(updateUser({ id, ...formData }));
     setEditId(null);
   };
 
@@ -29,18 +34,44 @@ const Home = () => {
       </div>
       <ul className="space-y-4">
         {users?.map((user) => (
-          <li key={user.id} className="flex justify-between items-center bg-gray-100 p-4 rounded shadow">
+          <li key={user.id} className="flex flex-col bg-gray-100 p-4 rounded shadow">
             {editId === user.id ? (
-              <input
-                type="text"
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)}
-                className="border p-2 rounded w-2/3"
-              />
+              <>
+                <input
+                  type="text"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                  className="border p-2 rounded w-full"
+                />
+                <input
+                  type="text"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                  className="border p-2 rounded w-full mt-2"
+                />
+                <input
+                  type="number"
+                  name="age"
+                  value={formData.age}
+                  onChange={(e) => setFormData({ ...formData, age: e.target.value })}
+                  className="border p-2 rounded w-full mt-2"
+                />
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  className="border p-2 rounded w-full mt-2"
+                />
+              </>
             ) : (
-              <span className="text-lg font-medium">{user.name}</span>
+              <>
+                <p className="text-lg font-medium">{user.firstName} {user.lastName} ({user.age} yosh)</p>
+                <p className="text-gray-600">{user.description}</p>
+              </>
             )}
-            <div className="space-x-2">
+            <div className="space-x-2 mt-2">
               {editId === user.id ? (
                 <button
                   onClick={() => handleSave(user.id)}
@@ -49,21 +80,19 @@ const Home = () => {
                   Save
                 </button>
               ) : (
-                <>
-                  <button
-                    onClick={() => handleEdit(user)}
-                    className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-700"
-                  >
-                    Update
-                  </button>
-                  <button
-                    onClick={() => dispatch(removeUser(user.id))}
-                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-700"
-                  >
-                    Delete
-                  </button>
-                </>
+                <button
+                  onClick={() => handleEdit(user)}
+                  className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-700"
+                >
+                  Update
+                </button>
               )}
+              <button
+                onClick={() => dispatch(removeUser(user.id))}
+                className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-700"
+              >
+                Delete
+              </button>
             </div>
           </li>
         ))}
